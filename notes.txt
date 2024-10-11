@@ -1,0 +1,106 @@
+== WIFI ==
+https://github.com/espressif/esp-idf/tree/v5.2.3/examples/wifi/getting_started/station
+
+
+== SOCKETS ==
+
+https://pubs.opengroup.org/onlinepubs/007908799/xns/socket.html
+
+// socket functions
+https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/lwip.html#bsd-sockets-api
+
+// socket options for setsocketopt()
+https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/lwip.html#socket-options
+
+// socket error handling
+https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/lwip.html#socket-error-handling
+    // error codes
+    https://github.com/espressif/newlib-esp32/blob/master/newlib/libc/include/sys/errno.h
+
+// sockets header file
+https://github.com/espressif/esp-lwip/blob/6bc36ec/src/include/lwip/sockets.h
+
+
+socket(address_family, type, protocol)
+    Address Family:
+        AF_INET // ipv4
+        AF_INET6 // ipv6
+        AF_UNSPEC // unspecified?
+    Type:
+        SOCK_STREAM // tcp
+        SOCK_DGRAM // udp
+        SOCK_RAW // raw
+    Protocols:
+        IPPROTO_IP
+        IPPROTO_ICMP
+        IPPROTO_TCP
+        IPPROTO_UDP
+        IPPROTO_IPV6
+        IPPROTO_ICMPV6
+        IPPROTO_UDPLITE
+        IPPROTO_RAW
+
+setsockopt(socket, level)
+    Level:
+        SOL_SOCKET
+            SO_REUSEADDR // Allow local address reuse
+            SO_KEEPALIVE // keep connections alive 
+            SO_BROADCAST // permit to send and to receive broadcast messages (see IP_SOF_BROADCAST option)
+            SO_DEBUG        // Unimplemented: turn on debugging info recording 
+            SO_ACCEPTCONN   // socket has had listen() 
+            SO_DONTROUTE    // Unimplemented: just use interface addresses 
+            SO_USELOOPBACK  // Unimplemented: bypass hardware when possible 
+            SO_LINGER       // linger on close if data present 
+            SO_DONTLINGER   ((int)(~SO_LINGER)) // ?
+            SO_OOBINLINE    // Unimplemented: leave received OOB data in line 
+            SO_REUSEPORT    // Unimplemented: allow local address & port reuse 
+            SO_SNDBUF       // Unimplemented: send buffer size 
+            SO_RCVBUF       // receive buffer size 
+            SO_SNDLOWAT     // Unimplemented: send low-water mark 
+            SO_RCVLOWAT     // Unimplemented: receive low-water mark 
+            SO_SNDTIMEO     // send timeout 
+            SO_RCVTIMEO     // receive timeout 
+            SO_ERROR        // get error status and clear 
+            SO_TYPE         // get socket type 
+            SO_CONTIMEO     // Unimplemented: connect timeout 
+            SO_NO_CHECK     // don't create UDP checksum 
+            SO_BINDTODEVICE // bind to device 
+        IPPROTO_IP
+        IPPROTO_TCP
+        IPPROTO_IPV6
+        IPPROTO_UDPLITE
+
+
+
+
+struct raw_pcb * raw_new        (u8_t proto);
+err_t            raw_connect    (struct raw_pcb *pcb, const ip_addr_t *ipaddr);
+void             raw_disconnect (struct raw_pcb *pcb);
+err_t            raw_bind       (struct raw_pcb *pcb, const ip_addr_t *ipaddr);
+err_t            raw_sendto     (struct raw_pcb *pcb, struct pbuf *p, const ip_addr_t *ipaddr);
+err_t            raw_send       (struct raw_pcb *pcb, struct pbuf *p);\
+void             raw_recv       (struct raw_pcb *pcb, raw_recv_fn recv, void *recv_arg);
+
+
+
+== DHCP ==
+DHCP Starvation attack
+Delilah's Fist
+
+/* NETIF */
+    // esp_netif_dhcps_option - Set or Get DHCP server option.
+        https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_netif.html?highlight=dhcp#_CPPv422esp_netif_dhcps_optionP11esp_netif_t28esp_netif_dhcp_option_mode_t26esp_netif_dhcp_option_id_tPv8uint32_t
+    // esp_netif_dhcps_start - Start DHCP server (only if enabled in interface object)
+        https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_netif.html?highlight=dhcp#_CPPv421esp_netif_dhcps_startP11esp_netif_t
+    // esp_netif_set_dns_info - Set DNS Server information (DHCP in this case)
+        https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_netif.html?highlight=dhcp#_CPPv422esp_netif_set_dns_infoP11esp_netif_t20esp_netif_dns_type_tP20esp_netif_dns_info_t
+
+/* LWIP */
+    // header file
+    https://github.com/espressif/esp-idf/blob/6e5a178b3120dced7fa5c29c655cc22ea182df3d/components/lwip/include/apps/dhcpserver/dhcpserver.h
+
+    // options
+    https://github.com/espressif/esp-idf/blob/6e5a178b3120dced7fa5c29c655cc22ea182df3d/components/lwip/include/apps/dhcpserver/dhcpserver_options.h
+
+    // source file
+    https://github.com/espressif/esp-idf/blob/6e5a178b3120dced7fa5c29c655cc22ea182df3d/components/lwip/apps/dhcpserver/dhcpserver.c                                                                                                           
