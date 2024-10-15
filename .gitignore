@@ -2,3 +2,5 @@ sdkconfig
 *.old
 old
 build
+.vscode
+*.code-workspace

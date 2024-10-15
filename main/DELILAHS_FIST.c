@@ -29,13 +29,13 @@
 uint8_t mac[6] = {0x01,0x02,0x03,0x04,0x05,0x06};
 
 // Time in seconds to loop raw_send_task
-float loopSeconds = 1;
+// float loopSeconds = 1;
 
 // Network timeout in seconds
-int timeoutSecs = 10;
+// int timeoutSecs = 10;
 
 // packet contents
-static const char *payload = "LETS FUCKING GOOOOO LFGGGGGGGGG";
+// static const char *payload = "LETS FUCKING GOOOOO LFGGGGGGGGG";
 
 // Tag for logging
 static const char *TAGSUCC = "GreatSucc:";
@@ -48,7 +48,7 @@ static int s_retry_num = 0;
 esp_netif_t *netifWifi;
 int err;
 int errno;
-int sockfd;
+// int sockfd;
 
 // ip info after connecting to AP
 char str_ipv4[16]; // local ip os esp
@@ -57,16 +57,17 @@ char str_ipgw[16]; // gateway
 
 static void DELILAHS_FIST(void *pvParameters) {
     // decode DHCP server IP
-    esp_ip4_addr_t dhcpIP;
+    esp_ip4_addr_t *dhcpIP;
     esp_netif_str_to_ip4(DHCP_IP, dhcpIP);
 
     // decode DNS server IP
-    esp_ip4_addr_t dnsIP;
+    esp_ip4_addr_t *dnsIP;
     esp_netif_str_to_ip4(DNS_SERVER, dnsIP);
 
-    struct esp_netif_dns_info_t dns_ip_wraped = {dnsIP}; // wtf is this shit frong
+    // struct esp_netif_dns_info_t dns_ip_wraped = {dnsIP}; // wtf is this shit frong
+    //esp_netif_dns_info_t dns_ip_wraped = {*dnsIP};
     ESP_ERROR_CHECK(esp_netif_dhcps_start(netifWifi)); // start the server
-    ESP_ERROR_CHECK(esp_netif_set_dns_info(netifWifi, ESP_NETIF_DNS_MAIN, dns_ip_wraped)); // set the dns server to one we specify
+    ESP_ERROR_CHECK(esp_netif_set_dns_info(netifWifi, ESP_NETIF_DNS_MAIN, (struct esp_netif_dns_info_t *)dnsIP)); // set the dns server to one we specify
 }
 
 /*
@@ -207,7 +208,7 @@ void wifi_init_sta(void)
     if (bits & WIFI_CONNECTED_BIT) {
         ESP_LOGI(TAGSUCC, "connected to ap SSID: %s", WIFI_SSID);
         // fork raw_send_task to FreeRTOS task
-        xTaskCreate(raw_send_task, "raw_send_task", 4096, NULL, 5, NULL);
+        xTaskCreate(DELILAHS_FIST, "DELILAHS_FIST", 4096, NULL, 5, NULL);
 
         ESP_LOGI(TAGSUCC, "Connected to AP- Sending packets");
     } else if (bits & WIFI_FAIL_BIT) {
